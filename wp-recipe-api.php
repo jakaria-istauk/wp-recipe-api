@@ -12,59 +12,26 @@ Plugin Name: Recipe API Plugin
 namespace JakariaIstaukPlugins;
 
 // Exit if accessed directly.
+use JakariaIstaukPlugins\Apps\Api;
+use JakariaIstaukPlugins\Apps\Common;
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
 class RecipeAPIPlugin {
 
     public function __construct() {
-        // Initialize the plugin
-        add_action('rest_api_init', array($this, 'init'));
+        add_action('plugins_loaded', function (){
+            $plugin_dir_path = plugin_dir_path(__FILE__);
+            require_once( $plugin_dir_path . 'Apps/Api.php');
+            new Api();
+
+            require_once( $plugin_dir_path . 'Apps/Common.php');
+            new Common();
+        });
     }
 
-    // Initialize custom endpoints
-    public function init() {
-        register_rest_route('recipe-api/v1', '/recipes', array(
-            'methods' => 'GET',
-            'callback' => array($this, 'get_all_recipes'),
-        ));
-
-        register_rest_route('recipe-api/v1', '/recipes/(?P<id>\d+)', array(
-            'methods' => 'GET, POST, PUT, DELETE',
-            'callback' => array($this, 'recipe_api_handler'),
-        ));
-    }
-
-    // Callback function to handle recipe API requests
-    public function recipe_api_handler($request) {
-        // Your API logic goes here
-        // You'll need to implement the logic to create, read, update, and delete recipes
-
-        // Example response
-        $response = array(
-            'message' => 'Recipe API is working!',
-        );
-
-        return rest_ensure_response($response);
-    }
-
-    // Callback function to get all recipes
-    public function get_all_recipes($request) {
-        // Your logic to retrieve all recipes goes here
-
-        // Example response
-        $recipes = array(
-            array(
-                'title' => 'Spaghetti Carbonara',
-                'ingredients' => 'Pasta, Eggs, Pancetta, Parmesan Cheese',
-                'instructions' => 'Cook pasta, mix with egg and pancetta mixture, add cheese.',
-            ),
-            // Add more recipes here
-        );
-
-        return rest_ensure_response($recipes);
-    }
 }
 
-// Instantiate the RecipeAPIPlugin class
 $recipe_api_plugin = new RecipeAPIPlugin();
