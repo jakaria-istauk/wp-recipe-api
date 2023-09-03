@@ -1,5 +1,3 @@
----
-
 # Recipe API Plugin for WordPress
 
 The Recipe API Plugin is a custom WordPress plugin designed to handle food recipe data through a RESTful API. This plugin allows you to create, read, update, and delete recipes, making it easy to manage and share your favorite culinary creations on your WordPress website.
@@ -78,8 +76,4 @@ This plugin is licensed under the MIT License. You can find the full license tex
 
 ## Author
 
-This Recipe API Plugin for WordPress was developed by [Jakaria Istauk](https://yourwebsite.com](https://profiles.wordpress.org/jakariaistauk/)).
-
----
-
-Feel free to customize this README file to suit your specific plugin's needs. Make sure to replace placeholders like `https://yourwebsite.com` with your actual WordPress website URL and provide proper attribution and licensing information.
+This Recipe API Plugin for WordPress was developed by [Jakaria Istauk](https://profiles.wordpress.org/jakariaistauk/).
