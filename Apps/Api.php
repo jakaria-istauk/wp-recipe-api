@@ -23,7 +23,6 @@ class Api
 
 	    register_rest_route($api_name_space, '/recipe', array(
 		    'methods' => 'POST',
-			'permission_call_back' => [$this, 'is_eligible'],
 		    'callback' => array($this, 'create_a_recipe'),
 	    ));
 
@@ -31,6 +30,16 @@ class Api
             'methods' => 'GET, POST, PUT, DELETE',
             'callback' => array($this, 'recipe_api_handler'),
         ));
+
+	    register_rest_route($api_name_space, '/user/signup', array(
+		    'methods' => 'POST',
+		    'callback' => array($this, 'register_user'),
+	    ));
+
+	    register_rest_route($api_name_space, '/user/login', array(
+		    'methods' => 'POST',
+		    'callback' => array($this, 'user_validation'),
+	    ));
     }
 
     // Callback function to get all recipes
@@ -62,12 +71,12 @@ class Api
 		return rest_ensure_response( $recipes );
 	}
 
-	public function get_recipe_by_slug($request) {
+	public function get_recipe_by_slug( $request ) {
 
 		$recipe = get_page_by_path( $request->get_param( 'slug' ), OBJECT, 'recipe' );
 		if ( $recipe ) {
 			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $recipe->ID ), 'full' );
-			$response = [
+			$response  = [
 				'id'          => $recipe->ID,
 				'title'       => $recipe->post_title,
 				'description' => $recipe->post_content,
@@ -83,19 +92,84 @@ class Api
 		}
 
 
-		return rest_ensure_response($response);
+		return rest_ensure_response( $response );
 	}
 
-	public function is_eligible(){
-
-	}
-
-	public function create_a_recipe($request){
+	public function create_a_recipe( $request ) {
 		$response = array(
-			'message' => 'Recipe API is working!',
-			'request' => $request->get_param( 'slug' )
+			'message' => 'Recipe API is working for post!',
+			'request' => $request->get_body_params()
 		);
 
-		return rest_ensure_response($response);
+		return rest_ensure_response( $response );
+	}
+
+	public function register_user( $request ){
+		$params = $request->get_body_params();
+		if ( !isset( $params['email'] ) ){
+			$response = [
+				'status' => 0,
+				'type' => 'data_missing',
+				'message' => 'Email is required'
+			];
+			return rest_ensure_response( $response );
+		}
+
+		$user_name  = '';
+		$first_name = $params['fname'] ?? '';
+		$first_name = sanitize_text_field( $first_name );
+		$last_name  = $params['lname'] ?? '';
+		$last_name  = sanitize_text_field( $last_name );
+		$user_name  .= $first_name;
+		$user_name  .= $last_name;
+		$user_name  = strtolower( $user_name );
+		$user_email = sanitize_email( $params['email'] );
+		$user_pass  = $params['password'] ?? wp_generate_password( 6, true );
+		if ( username_exists( $user_name ) ){
+			$_user_name = explode('@', $params['email'] );
+			$user_name = $_user_name[0];
+		}
+
+		if ( email_exists( $user_email ) ){
+			$response = [
+				'status' => 0,
+				'type' => 'email_exist',
+				'message' => 'Email already exist'
+			];
+			return rest_ensure_response( $response );
+		}
+
+		$user_id = wp_create_user( $user_name, $user_pass, $user_email );
+		if ( !$user_id ){
+			$response = [
+				'status' => 0,
+				'type' => 'create_failed',
+				'message' => 'Something went wrong. Try again'
+			];
+			return rest_ensure_response( $response );
+		}
+		$user_data = [
+			'first_name' => $first_name,
+			'last_name'  => $last_name,
+		];
+
+		update_user_meta( $user_id, '_user_extra_data', $user_data );
+
+		$response = array(
+			'status'  => 1,
+			'type'    => 'user_created',
+			'message' => 'User register Successfully!',
+		);
+
+		return rest_ensure_response( $response );
+	}
+
+	public function user_validation( $request ) {
+		$response = array(
+			'message' => 'Recipe API is working for logedin!',
+			'request' => $request->get_body_params()
+		);
+
+		return rest_ensure_response( $response );
 	}
 }
