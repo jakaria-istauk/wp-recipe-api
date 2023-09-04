@@ -19,15 +19,17 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+define('WPRECIPEAPI_PLUGIN_DIR', plugin_dir_path(__FILE__));
+
 class RecipeAPIPlugin {
 
     public function __construct() {
         add_action('plugins_loaded', function (){
             $plugin_dir_path = plugin_dir_path(__FILE__);
-            require_once( $plugin_dir_path . 'Apps/Api.php');
+            require_once( WPRECIPEAPI_PLUGIN_DIR . 'Apps/Api.php');
             new Api();
 
-            require_once( $plugin_dir_path . 'Apps/Common.php');
+            require_once( WPRECIPEAPI_PLUGIN_DIR . 'Apps/Common.php');
             new Common();
         });
     }

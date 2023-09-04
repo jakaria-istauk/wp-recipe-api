@@ -7,6 +7,7 @@ class Common
     public function __construct()
     {
         add_action( 'init', [$this, 'register_post_type_recipe'] );
+	    add_filter( 'template_include', [$this, 'replace_front_page'] );
     }
     public function register_post_type_recipe() {
 	    $labels = array(
@@ -72,4 +73,18 @@ class Common
 	    register_taxonomy_for_object_type( 'recipe_cat', 'recipe' );
 	    register_post_type( 'recipe', $args );
     }
+
+	public function replace_front_page($templates){
+		$is_react_view = get_option( '_wp_recipe_react_view' );
+
+		if ( !is_admin() && $is_react_view === 'yes' ) {
+			$custom_template = WPRECIPEAPI_PLUGIN_DIR . 'react-app.php';
+			if (file_exists($custom_template)) {
+				return $custom_template;
+			}
+		}
+
+		return $templates;
+	}
+
 }
