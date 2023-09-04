@@ -7,6 +7,8 @@ class Api
     public function __construct()
     {
         add_action('rest_api_init', array($this, 'init'));
+	    $plugin_dir_path = plugin_dir_path(__FILE__);
+	    require_once( $plugin_dir_path . 'Helper.php');
     }
     public function init() {
 
@@ -199,11 +201,18 @@ class Api
 			return rest_ensure_response( $response );
 		}
 
+		$user_login = [
+			'email'      => $user->data->user_email,
+			'id'         => $user->ID,
+			'user_login' => $user->data->user_login
+		];
+
 		$response = array(
-			'message' => 'Recipe API is working for logedin!',
-			'request' => $request->get_body_params(),
-			'user' =>$user->data,
-			'pass' => wp_check_password( $user_pass, $user->data->user_pass, $user->ID )
+			'status'     => 1,
+			'type'       => 'logged_in',
+			'message'    => 'User authenticated!',
+			'user_login' => Helper::encrypt( json_encode( $user_login ) ),
+			'user_caps'  => base64_encode( json_encode( $user_login ) )
 		);
 
 		return rest_ensure_response( $response );
