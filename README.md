@@ -24,13 +24,13 @@ Once the Recipe API Plugin is installed and activated, you can use it to manage 
 
 - **GET /wp-json/recipe-api/v1/recipes**: Get a list of all recipes.
 
-- **GET /wp-json/recipe-api/v1/recipes/{id}**: Get a specific recipe by ID.
+- **GET /wp-json/recipe-api/v1/recipe/{slug}**: Get a specific recipe by slug/name.
 
-- **POST /wp-json/recipe-api/v1/recipes**: Create a new recipe.
+- **POST /wp-json/recipe-api/v1/recipe**: Create a new recipe.
 
-- **PUT /wp-json/recipe-api/v1/recipes/{id}**: Update an existing recipe by ID.
+- **PUT /wp-json/recipe-api/v1/recipe/{slug}**: Update an existing recipe by slug/name.
 
-- **DELETE /wp-json/recipe-api/v1/recipes/{id}**: Delete a recipe by ID.
+- **DELETE /wp-json/recipe-api/v1/recipe/{slug}**: Delete a recipe by slug/name.
 
 ### Authentication
 
