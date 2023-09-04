@@ -165,9 +165,45 @@ class Api
 	}
 
 	public function user_validation( $request ) {
+		$params = $request->get_body_params();
+
+		if ( ! isset( $params['email'] ) ){
+			$response = [
+				'status' => 0,
+				'type' => 'data_missing',
+				'message' => 'Email is required'
+			];
+			return rest_ensure_response( $response );
+		}
+		$user_email = $params['email'] ?? '';
+		$user_pass = $params['password'] ?? '';
+		$user_email = sanitize_email( $user_email );
+
+		$user = get_user_by( 'email', $user_email );
+
+		if ( !$user ){
+			$response = [
+				'status' => 0,
+				'type' => 'invalid_email',
+				'message' => 'Email is not found'
+			];
+			return rest_ensure_response( $response );
+		}
+
+		if ( !wp_check_password( $user_pass, $user->data->user_pass, $user->ID ) ){
+			$response = [
+				'status' => 0,
+				'type' => 'invalid_password',
+				'message' => 'Password Not matched'
+			];
+			return rest_ensure_response( $response );
+		}
+
 		$response = array(
 			'message' => 'Recipe API is working for logedin!',
-			'request' => $request->get_body_params()
+			'request' => $request->get_body_params(),
+			'user' =>$user->data,
+			'pass' => wp_check_password( $user_pass, $user->data->user_pass, $user->ID )
 		);
 
 		return rest_ensure_response( $response );
