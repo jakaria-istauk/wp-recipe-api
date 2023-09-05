@@ -85,7 +85,8 @@ class Api
 				'description' => $recipe->post_content,
 				'slug'        => $recipe->post_name,
 				'image'       => $thumbnail ? $thumbnail[0] : $thumbnail,
-				'ingredients' => get_post_meta( $recipe->ID, '_recipe_ingredients', true )
+				'ingredients' => get_post_meta( $recipe->ID, '_recipe_ingredients', true ),
+				'user_hash'   => Helper::encrypt( "{$recipe->post_author}author" )
 			];
 		} else {
 			$response = array(
@@ -124,16 +125,16 @@ class Api
 		}
 
 		$user_name  = '';
-		$first_name = $params['fname'] ?? '';
+		$first_name = $params['first_name'] ?? '';
 		$first_name = sanitize_text_field( $first_name );
-		$last_name  = $params['lname'] ?? '';
+		$last_name  = $params['last_name'] ?? '';
 		$last_name  = sanitize_text_field( $last_name );
 		$user_name  .= $first_name;
 		$user_name  .= $last_name;
 		$user_name  = strtolower( $user_name );
 		$user_email = sanitize_email( $params['email'] );
 		$user_pass  = $params['password'] ?? wp_generate_password( 6, true );
-		if ( username_exists( $user_name ) ){
+		if ( username_exists( $user_name ) || !$user_name ){
 			$_user_name = explode('@', $params['email'] );
 			$user_name = $_user_name[0];
 		}
