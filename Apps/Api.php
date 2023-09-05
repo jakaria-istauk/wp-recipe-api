@@ -168,6 +168,28 @@ class Api
 			'message' => 'User register Successfully!',
 		);
 
+		$user = get_user_by( 'id', $user_id );
+
+		$user_login = [
+			'email'      => $user->data->user_email,
+			'id'         => $user->ID,
+			'user_login' => $user->data->user_login
+		];
+
+		$user_caps = [
+			'user_name' => $user->data->user_login,
+			'full_name' => get_user_meta( $user->ID, '_user_extra_data', true  ),
+			'can_post'  => user_can( $user->ID, 'edit_posts' ),
+		];
+
+		$response = array(
+			'status'     => 1,
+			'type'       => 'logged_in',
+			'message'    => 'User authenticated!',
+			'user_login' => Helper::encrypt( json_encode( $user_login ) ),
+			'user_caps'  => base64_encode( json_encode( $user_caps ) )
+		);
+
 		return rest_ensure_response( $response );
 	}
 
@@ -216,12 +238,18 @@ class Api
 			'user_login' => $user->data->user_login
 		];
 
+		$user_caps = [
+			'user_name' => $user->data->user_login,
+			'full_name' => get_user_meta( $user->ID, '_user_extra_data', true  ),
+			'can_post'  => user_can( $user->ID, 'edit_posts' ),
+		];
+
 		$response = array(
 			'status'     => 1,
 			'type'       => 'logged_in',
 			'message'    => 'User authenticated!',
 			'user_login' => Helper::encrypt( json_encode( $user_login ) ),
-			'user_caps'  => base64_encode( json_encode( $user_login ) )
+			'user_caps'  => base64_encode( json_encode( $user_caps ) )
 		);
 
 		return rest_ensure_response( $response );
