@@ -107,7 +107,12 @@ class Api
 	}
 
 	public function register_user( $request ){
-		$params = $request->get_body_params();
+		$params = $request->get_json_params();
+
+		if ( empty( $params ) ){
+			$params = $request->get_body_params();
+		}
+
 		if ( !isset( $params['email'] ) ){
 			$response = [
 				'status' => 0,
@@ -167,7 +172,11 @@ class Api
 	}
 
 	public function user_validation( $request ) {
-		$params = $request->get_body_params();
+		$params = $request->get_json_params();
+
+		if ( empty( $params ) ){
+			$params = $request->get_body_params();
+		}
 
 		if ( ! isset( $params['email'] ) ){
 			$response = [
@@ -177,7 +186,7 @@ class Api
 			];
 			return rest_ensure_response( $response );
 		}
-		$user_email = $params['email'] ?? '';
+		$user_email = $params['email'];
 		$user_pass = $params['password'] ?? '';
 		$user_email = sanitize_email( $user_email );
 
