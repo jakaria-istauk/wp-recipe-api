@@ -255,12 +255,30 @@ class Api
 			$params = $request->get_body_params();
 		}
 
+		$post_id = wp_insert_post( [
+			'post_type'    => 'recipe',
+			'post_title'   => $params['title'] ?? sanitize_text_field( $params['title'] ),
+			'post_content' => $params['description'] ?? sanitize_textarea_field( $params['description'] ),
+			'post_status'  => 'publish',
+			'post_author'  => $user->ID,
+		] );
+
+		if ( !$post_id ) {
+			$response = array(
+				'status'  => 0,
+				'message' => 'Recipe Can\'t create. Something went wrong. Try Again',
+			);
+
+			return rest_ensure_response( $response );
+		}
+
+		update_post_meta( $post_id, '_recipe_ingredients', $params['ingredients'] ?? sanitize_text_field( $params['ingredients'] ) );
+		$recipe   = get_post( $post_id );
 		$response = array(
-			'message' => 'Recipe API is working for post!',
-			'request' => $params,
+			'status'  => 1,
+			'message' => 'Recipe created Successfully!',
+			'slug'    => $recipe->post_name,
 		);
-
-
 
 		return rest_ensure_response( $response );
 	}
