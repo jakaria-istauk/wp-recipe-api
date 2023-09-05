@@ -65,7 +65,8 @@ class Api
 					'description' => $post->post_content,
 					'slug'        => $post->post_name,
 					'image'       => $thumbnail ? $thumbnail[0] : $thumbnail,
-					'ingredients' => get_post_meta( $post->ID, '_recipe_ingredients', true )
+					'ingredients' => get_post_meta( $post->ID, '_recipe_ingredients', true ),
+					'user_hash'   => Helper::encrypt( "{$post->post_author}author" )
 				];
 			}
 		}
@@ -170,24 +171,12 @@ class Api
 
 		$user = get_user_by( 'id', $user_id );
 
-		$user_login = [
-			'email'      => $user->data->user_email,
-			'id'         => $user->ID,
-			'user_login' => $user->data->user_login
-		];
-
-		$user_caps = [
-			'user_name' => $user->data->user_login,
-			'full_name' => get_user_meta( $user->ID, '_user_extra_data', true  ),
-			'can_post'  => user_can( $user->ID, 'edit_posts' ),
-		];
-
 		$response = array(
 			'status'     => 1,
-			'type'       => 'logged_in',
-			'message'    => 'User authenticated!',
-			'user_login' => Helper::encrypt( json_encode( $user_login ) ),
-			'user_caps'  => base64_encode( json_encode( $user_caps ) )
+			'type'       => 'user_created',
+			'message'    => 'User register Successfully!',
+			'user_login' => Helper::prepare_user_login_hash( $user ),
+			'user_caps'  => Helper::prepare_user_caps_hash( $user ),
 		);
 
 		return rest_ensure_response( $response );
@@ -232,24 +221,12 @@ class Api
 			return rest_ensure_response( $response );
 		}
 
-		$user_login = [
-			'email'      => $user->data->user_email,
-			'id'         => $user->ID,
-			'user_login' => $user->data->user_login
-		];
-
-		$user_caps = [
-			'user_name' => $user->data->user_login,
-			'full_name' => get_user_meta( $user->ID, '_user_extra_data', true  ),
-			'can_post'  => user_can( $user->ID, 'edit_posts' ),
-		];
-
 		$response = array(
 			'status'     => 1,
 			'type'       => 'logged_in',
 			'message'    => 'User authenticated!',
-			'user_login' => Helper::encrypt( json_encode( $user_login ) ),
-			'user_caps'  => base64_encode( json_encode( $user_caps ) )
+			'user_login' => Helper::prepare_user_login_hash( $user ),
+			'user_caps'  => Helper::prepare_user_caps_hash( $user ),
 		);
 
 		return rest_ensure_response( $response );
