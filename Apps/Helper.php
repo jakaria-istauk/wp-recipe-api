@@ -63,8 +63,8 @@ class Helper
 
 		$ingredients = $data['ingredients'] ?? sanitize_text_field( $data['ingredients'] );
 		update_post_meta( $post_id, '_recipe_ingredients', $ingredients );
-		if ( ! empty( $data['image_url'] ) ) {
-			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $data['image_url'] ) );
+		if ( ! empty( $data['image'] ) ) {
+			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $data['image'] ) );
 		}
 
 		return get_post( $post_id );

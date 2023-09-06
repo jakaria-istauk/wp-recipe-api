@@ -221,8 +221,8 @@ class Api
 			];
 		} else {
 			$response = array(
-				'message' => 'Recipe API is working!',
-				'request' => $request->get_param( 'slug' )
+				'status' => 0,
+				'message' => 'No recipe found',
 			);
 		}
 
@@ -278,8 +278,8 @@ class Api
 		}
 
 		update_post_meta( $post_id, '_recipe_ingredients', $params['ingredients'] ?? sanitize_text_field( $params['ingredients'] ) );
-		if ( !empty( $params['image_url'] ) ){
-			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $params['image_url'] ) );
+		if ( !empty( $params['image'] ) ){
+			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $params['image'] ) );
 		}
 		$recipe   = get_post( $post_id );
 		$response = array(
