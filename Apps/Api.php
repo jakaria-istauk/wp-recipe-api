@@ -188,7 +188,7 @@ class Api
 				$recipes[] = [
 					'id'          => $post->ID,
 					'title'       => $post->post_title,
-					'description' => $post->post_content,
+					'instructions' => $post->post_content,
 					'slug'        => $post->post_name,
 					'image'       => $thumbnail ? $thumbnail[0] : get_post_meta( $post->ID, '_recipe_image_url', true ),
 					'ingredients' => get_post_meta( $post->ID, '_recipe_ingredients', true ),
@@ -208,7 +208,7 @@ class Api
 			$response  = [
 				'id'          => $recipe->ID,
 				'title'       => $recipe->post_title,
-				'description' => $recipe->post_content,
+				'instructions' => $recipe->post_content,
 				'slug'        => $recipe->post_name,
 				'image'       => $thumbnail ? $thumbnail[0] : get_post_meta( $recipe->ID, '_recipe_image_url', true ),
 				'ingredients' => get_post_meta( $recipe->ID, '_recipe_ingredients', true ),
@@ -258,7 +258,7 @@ class Api
 		$post_id = wp_insert_post( [
 			'post_type'    => 'recipe',
 			'post_title'   => $params['title'] ?? sanitize_text_field( $params['title'] ),
-			'post_content' => $params['description'] ?? sanitize_textarea_field( $params['description'] ),
+			'post_content' => $params['instructions'] ?? sanitize_textarea_field( $params['instructions'] ),
 			'post_status'  => 'publish',
 			'post_author'  => $user->ID,
 		] );
