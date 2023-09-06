@@ -35,4 +35,38 @@ class Helper
 
 		return  base64_encode( json_encode( $user_caps ) );
 	}
+
+	public static function recipe_manager( $data, $author_id = false ){
+
+		$recipe_data = [
+			'post_type'    => 'recipe',
+			'post_title'   => $data['title'] ?? sanitize_text_field( $data['title'] ),
+			'post_content' => $data['instructions'] ?? sanitize_textarea_field( $data['instructions'] ),
+			'post_status'  => 'publish',
+		];
+
+		if ( $author_id ){
+			$recipe_data['post_author'] = $author_id;
+		}
+
+		if ( !empty( $data['id'] ) ){
+			$recipe_data['ID'] = $data['id'];
+			$post_id = wp_update_post( $recipe_data );
+		}
+		else{
+			$post_id = wp_insert_post( $recipe_data );
+		}
+
+		if ( is_wp_error( $post_id ) ) {
+			return false;
+		}
+
+		$ingredients = $data['ingredients'] ?? sanitize_text_field( $data['ingredients'] );
+		update_post_meta( $post_id, '_recipe_ingredients', $ingredients );
+		if ( ! empty( $data['image_url'] ) ) {
+			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $data['image_url'] ) );
+		}
+
+		return get_post( $post_id );
+	}
 }

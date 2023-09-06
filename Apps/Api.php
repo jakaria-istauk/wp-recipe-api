@@ -39,6 +39,11 @@ class Api
 			'callback' => array( $this, 'create_a_recipe' ),
 		) );
 
+		register_rest_route( $api_name_space, '/recipe/(?P<id>\d+)', array(
+			'methods'  => 'PUT',
+			'callback' => array( $this, 'update_a_recipe' ),
+		) );
+
 		register_rest_route( $api_name_space, '/recipes/(?P<id>\d+)', array(
 			'methods'  => 'GET, POST, PUT, DELETE',
 			'callback' => array( $this, 'recipe_api_handler' ),
@@ -283,6 +288,66 @@ class Api
 			'slug'    => $recipe->post_name,
 		);
 
+		return rest_ensure_response( $response );
+	}
+
+	public function update_a_recipe( $request ) {
+		$auth_token = $request->get_header('authorization');
+		$auth_data = json_decode( Helper::decrypt($auth_token) );
+
+		if ( !$auth_data ){
+			$response = array(
+				'status'  => 0,
+				'message' => 'Unauthorized Request',
+			);
+			return rest_ensure_response( $response );
+		}
+
+		$recipe_id = $request->get_param('id');
+
+		$recipe = get_post( $recipe_id );
+
+		if ( !$recipe ){
+			$response = array(
+				'status'  => 0,
+				'message' => 'Invalid recipe',
+			);
+			return rest_ensure_response( $response );
+		}
+
+		if ( ! user_can( $auth_data->id, 'edit_posts', $recipe->ID ) ) {
+			$response = array(
+				'status'  => 0,
+				'message' => 'Request is not valid for this update',
+			);
+
+			return rest_ensure_response( $response );
+		}
+
+		$params = (array)json_decode( $request->get_body() );
+
+		if ( empty( $params ) ){
+			$response = array(
+				'status'  => 0,
+				'message' => 'Data is not in valid format',
+			);
+			return rest_ensure_response( $response );
+		}
+		$params['id'] = $recipe->ID;
+		$recipe = Helper::recipe_manager( $params );
+
+		if ( !$recipe ){
+			$response = array(
+				'status'  => 0,
+				'message' => 'Recipe can\'t update. Unknown error occurred.'
+			);
+			return rest_ensure_response( $response );
+		}
+
+		$response = array(
+			'status'  => 1,
+			'message' => 'Recipe updated successfully!',
+		);
 		return rest_ensure_response( $response );
 	}
 }
