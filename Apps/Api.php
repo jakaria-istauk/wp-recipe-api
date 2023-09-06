@@ -190,7 +190,7 @@ class Api
 					'title'       => $post->post_title,
 					'description' => $post->post_content,
 					'slug'        => $post->post_name,
-					'image'       => $thumbnail ? $thumbnail[0] : $thumbnail,
+					'image'       => $thumbnail ? $thumbnail[0] : get_post_meta( $post->ID, '_recipe_image_url', true ),
 					'ingredients' => get_post_meta( $post->ID, '_recipe_ingredients', true ),
 					'user_hash'   => Helper::encrypt( "{$post->post_author}author" )
 				];
@@ -210,7 +210,7 @@ class Api
 				'title'       => $recipe->post_title,
 				'description' => $recipe->post_content,
 				'slug'        => $recipe->post_name,
-				'image'       => $thumbnail ? $thumbnail[0] : $thumbnail,
+				'image'       => $thumbnail ? $thumbnail[0] : get_post_meta( $recipe->ID, '_recipe_image_url', true ),
 				'ingredients' => get_post_meta( $recipe->ID, '_recipe_ingredients', true ),
 				'user_hash'   => Helper::encrypt( "{$recipe->post_author}author" )
 			];
@@ -273,6 +273,9 @@ class Api
 		}
 
 		update_post_meta( $post_id, '_recipe_ingredients', $params['ingredients'] ?? sanitize_text_field( $params['ingredients'] ) );
+		if ( !empty( $params['image_url'] ) ){
+			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $params['image_url'] ) );
+		}
 		$recipe   = get_post( $post_id );
 		$response = array(
 			'status'  => 1,
