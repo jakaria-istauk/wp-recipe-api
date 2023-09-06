@@ -40,7 +40,7 @@ class Api
 		) );
 
 		register_rest_route( $api_name_space, '/recipe/(?P<id>\d+)', array(
-			'methods'  => 'PUT',
+			'methods'  => 'PUT, DELETE',
 			'callback' => array( $this, 'update_a_recipe' ),
 		) );
 
@@ -320,6 +320,23 @@ class Api
 				'status'  => 0,
 				'message' => 'Request is not valid for this update',
 			);
+
+			return rest_ensure_response( $response );
+		}
+
+		if ( $request->get_method() === 'DELETE' ){
+			$deleted = wp_delete_post( $recipe_id );
+			if ( $deleted ){
+				$response = array(
+					'status'  => 1,
+					'message' => 'Recipe is deleted',
+				);
+			}else{
+				$response = array(
+					'status'  => 0,
+					'message' => 'Recipe can\'t delete. something went wrong.',
+				);
+			}
 
 			return rest_ensure_response( $response );
 		}
