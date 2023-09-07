@@ -6,7 +6,7 @@ The Recipe API Plugin is a custom WordPress plugin designed to handle food recip
 
 To install the Recipe API Plugin on your WordPress site, follow these steps:
 
-1. Download the plugin ZIP file from [GitHub](https://github.com/your-username/recipe-api-plugin).
+1. Download the plugin ZIP file from [GitHub](https://github.com/jakaria-istauk/wp-recipe-api).
 
 2. Log in to your WordPress admin panel.
 
@@ -30,7 +30,7 @@ Once the Recipe API Plugin is installed and activated, you can use it to manage 
 
 - **PUT /wp-json/recipe-api/v1/recipe/{slug}**: Update an existing recipe by slug/name.
 
-- **DELETE /wp-json/recipe-api/v1/recipe/{slug}**: Delete a recipe by slug/name.
+- **DELETE /wp-json/recipe-api/v1/recipe/{id}**: Delete a recipe by slug/name.
 
 ### Authentication
 
@@ -49,24 +49,24 @@ curl -X GET https://yourwebsite.com/wp-json/recipe-api/v1/recipes
 **Create a new recipe:**
 
 ```shell
-curl -X POST -H "Content-Type: application/json" -d '{"title": "Delicious Pasta", "ingredients": "Pasta, Sauce, Cheese", "instructions": "Cook pasta, add sauce, sprinkle cheese, and enjoy!"}' https://yourwebsite.com/wp-json/recipe-api/v1/recipes
+curl -X POST -H "Content-Type: application/json" -d '{"title": "Delicious Pasta", "ingredients": "Pasta, Sauce, Cheese", "instructions": "Cook pasta, add sauce, sprinkle cheese, and enjoy!" "image":"image.url/base64 image", "image_src_type":"url/file"}' https://yourwebsite.com/wp-json/recipe-api/v1/recipe
 ```
 
 **Update an existing recipe:**
 
 ```shell
-curl -X PUT -H "Content-Type: application/json" -d '{"title": "Amazing Pasta", "ingredients": "Pasta, Tomato Sauce, Parmesan Cheese", "instructions": "Boil pasta, mix with tomato sauce, and sprinkle Parmesan cheese."}' https://yourwebsite.com/wp-json/recipe-api/v1/recipes/123
+curl -X PUT -H "Content-Type: application/json" -d '{"id":"recipeID","title": "Amazing Pasta", "ingredients": "Pasta, Tomato Sauce, Parmesan Cheese", "instructions": "Boil pasta, mix with tomato sauce, and sprinkle Parmesan cheese.""image":"image.url/base64 image", "image_src_type":"url/file"}' https://yourwebsite.com/wp-json/recipe-api/v1/recipe/slug
 ```
 
 **Delete a recipe:**
 
 ```shell
-curl -X DELETE https://yourwebsite.com/wp-json/recipe-api/v1/recipes/123
+curl -X DELETE -H "Content-Type: application/json" -d ' https://yourwebsite.com/wp-json/recipe-api/v1/recipe/123
 ```
 
 ## Support and Contributions
 
-If you encounter any issues or have suggestions for improving the Recipe API Plugin, please open an issue on [GitHub](https://github.com/your-username/recipe-api-plugin/issues).
+If you encounter any issues or have suggestions for improving the Recipe API Plugin, please open an issue on [GitHub](https://github.com/jakaria-istauk/wp-recipe-api/issues).
 
 Contributions to this project are welcome! Feel free to fork the repository, make changes, and create a pull request.
 
