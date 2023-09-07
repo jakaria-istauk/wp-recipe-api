@@ -189,16 +189,7 @@ class Api
 			$posts = $query->posts;
 
 			foreach ( $posts as $post ) {
-				$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
-				$recipes[] = [
-					'id'          => $post->ID,
-					'title'       => $post->post_title,
-					'instructions' => $post->post_content,
-					'slug'        => $post->post_name,
-					'image'       => $thumbnail ? $thumbnail[0] : get_post_meta( $post->ID, '_recipe_image_url', true ),
-					'ingredients' => get_post_meta( $post->ID, '_recipe_ingredients', true ),
-					'user_hash'   => Helper::encrypt( "{$post->post_author}author" )
-				];
+				$recipes[] = Helper::format_recipe_response_data( $post );
 			}
 		}
 
@@ -209,16 +200,7 @@ class Api
 
 		$recipe = get_page_by_path( $request->get_param( 'slug' ), OBJECT, 'recipe' );
 		if ( $recipe ) {
-			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $recipe->ID ), 'full' );
-			$response  = [
-				'id'          => $recipe->ID,
-				'title'       => $recipe->post_title,
-				'instructions' => $recipe->post_content,
-				'slug'        => $recipe->post_name,
-				'image'       => $thumbnail ? $thumbnail[0] : get_post_meta( $recipe->ID, '_recipe_image_url', true ),
-				'ingredients' => get_post_meta( $recipe->ID, '_recipe_ingredients', true ),
-				'user_hash'   => Helper::encrypt( "{$recipe->post_author}author" )
-			];
+			$response  = Helper::format_recipe_response_data( $recipe );
 		} else {
 			$response = array(
 				'status' => 0,
@@ -254,21 +236,15 @@ class Api
 			return rest_ensure_response( $response );
 		}
 
-		$params = $request->get_json_params();
+		$params = $request->get_body();
 
 		if ( empty( $params ) ){
 			$params = $request->get_body_params();
 		}
 
-		$post_id = wp_insert_post( [
-			'post_type'    => 'recipe',
-			'post_title'   => $params['title'] ?? sanitize_text_field( $params['title'] ),
-			'post_content' => $params['instructions'] ?? sanitize_textarea_field( $params['instructions'] ),
-			'post_status'  => 'publish',
-			'post_author'  => $user->ID,
-		] );
+		$recipe = Helper::recipe_manager( $params, $user->ID );
 
-		if ( !$post_id ) {
+		if ( !$recipe ) {
 			$response = array(
 				'status'  => 0,
 				'message' => 'Recipe Can\'t create. Something went wrong. Try Again',
@@ -277,11 +253,6 @@ class Api
 			return rest_ensure_response( $response );
 		}
 
-		update_post_meta( $post_id, '_recipe_ingredients', $params['ingredients'] ?? sanitize_text_field( $params['ingredients'] ) );
-		if ( !empty( $params['image'] ) ){
-			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $params['image'] ) );
-		}
-		$recipe   = get_post( $post_id );
 		$response = array(
 			'status'  => 1,
 			'message' => 'Recipe created Successfully!',
