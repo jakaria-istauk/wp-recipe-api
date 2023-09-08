@@ -236,7 +236,7 @@ class Api
 			return rest_ensure_response( $response );
 		}
 
-		$params = $request->get_body();
+		$params = $request->get_json_params();
 
 		if ( empty( $params ) ){
 			$params = $request->get_body_params();
@@ -256,7 +256,6 @@ class Api
 		$response = array(
 			'status'  => 1,
 			'message' => 'Recipe created Successfully!',
-			'slug'    => $recipe->post_name,
 		);
 
 		return rest_ensure_response( $response );
