@@ -22,6 +22,8 @@ To install the Recipe API Plugin on your WordPress site, follow these steps:
 
 Once the Recipe API Plugin is installed and activated, you can use it to manage food recipes through the API. The plugin provides the following API endpoints:
 
+**Manage Recipe:**
+
 - **GET /wp-json/recipe-api/v1/recipes**: Get a list of all recipes.
 
 - **GET /wp-json/recipe-api/v1/recipe/{slug}**: Get a specific recipe by slug/name.
@@ -31,6 +33,12 @@ Once the Recipe API Plugin is installed and activated, you can use it to manage 
 - **PUT /wp-json/recipe-api/v1/recipe/{slug}**: Update an existing recipe by slug/name.
 
 - **DELETE /wp-json/recipe-api/v1/recipe/{id}**: Delete a recipe by slug/name.
+
+**Manage User:**
+
+- **POST /wp-json/recipe-api/v1/user/signup**: Create a new user.
+- **POST /wp-json/recipe-api/v1/user/login**: validate a user with email & password.
+
 
 ### Authentication
 
@@ -49,19 +57,30 @@ curl -X GET https://yourwebsite.com/wp-json/recipe-api/v1/recipes
 **Create a new recipe:**
 
 ```shell
-curl -X POST -H "Content-Type: application/json" -d '{"title": "Delicious Pasta", "ingredients": "Pasta, Sauce, Cheese", "instructions": "Cook pasta, add sauce, sprinkle cheese, and enjoy!" "image":"image.url/base64 image", "image_src_type":"url/file"}' https://yourwebsite.com/wp-json/recipe-api/v1/recipe
+curl -X POST -H "Content-Type: application/json" -H "Authorization: logintoken" -d '{"title": "Delicious Pasta", "ingredients": "Pasta, Sauce, Cheese", "instructions": "Cook pasta, add sauce, sprinkle cheese, and enjoy!" "image":"image.url/base64 image", "image_src_type":"url/file"}' https://yourwebsite.com/wp-json/recipe-api/v1/recipe
 ```
 
 **Update an existing recipe:**
 
 ```shell
-curl -X PUT -H "Content-Type: application/json" -d '{"id":"recipeID","title": "Amazing Pasta", "ingredients": "Pasta, Tomato Sauce, Parmesan Cheese", "instructions": "Boil pasta, mix with tomato sauce, and sprinkle Parmesan cheese.""image":"image.url/base64 image", "image_src_type":"url/file"}' https://yourwebsite.com/wp-json/recipe-api/v1/recipe/slug
+curl -X PUT -H "Content-Type: application/json" -H "Authorization: logintoken" -d '{"id":"recipeID","title": "Amazing Pasta", "ingredients": "Pasta, Tomato Sauce, Parmesan Cheese", "instructions": "Boil pasta, mix with tomato sauce, and sprinkle Parmesan cheese.""image":"image.url/base64 image", "image_src_type":"url/file"}' https://yourwebsite.com/wp-json/recipe-api/v1/recipe/slug
 ```
 
 **Delete a recipe:**
 
 ```shell
-curl -X DELETE -H "Content-Type: application/json" -d ' https://yourwebsite.com/wp-json/recipe-api/v1/recipe/123
+curl -X DELETE -H "Content-Type: application/json" -H "Authorization: logintoken" -d ' https://yourwebsite.com/wp-json/recipe-api/v1/recipe/123
+```
+
+**Create a new user:**
+
+```shell
+curl -X POST -H "Content-Type: application/json" -d '{"first_name": "Jakaria", "last_name": "Istauk", "email": "user@mail.domain" "password":"password"}' https://yourwebsite.com/wp-json/recipe-api/v1/user/signup
+```
+**Validate a user:**
+
+```shell
+curl -X POST -H "Content-Type: application/json" -d '{"email": "user@mail.domain" "password":"password"}' https://yourwebsite.com/wp-json/recipe-api/v1/user/login
 ```
 
 ## Support and Contributions
