@@ -1,14 +1,14 @@
 <?php
 
-namespace JakariaIstaukPlugins\Apps;
+namespace Jakaria_Istauk_Plugins\Apps;
+
+use Jakaria_Istauk_Plugins\Apps\Helper;
 
 class Api
 {
     public function __construct()
     {
         add_action('rest_api_init', array($this, 'init'));
-	    $plugin_dir_path = plugin_dir_path(__FILE__);
-	    require_once( $plugin_dir_path . 'Helper.php');
     }
 
 	public function init() {
