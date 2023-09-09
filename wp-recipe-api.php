@@ -9,31 +9,59 @@ Plugin Name: Recipe API Plugin
 * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 */
 
-namespace JakariaIstaukPlugins;
+namespace Jakaria_Istauk_Plugins;
 
-// Exit if accessed directly.
-use JakariaIstaukPlugins\Apps\Api;
-use JakariaIstaukPlugins\Apps\Common;
+use Jakaria_Istauk_Plugins\Apps\Api;
+use Jakaria_Istauk_Plugins\Apps\Common;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define('WPRECIPEAPI_PLUGIN_DIR', plugin_dir_path(__FILE__));
+/**
+ * Defining plugin constants.
+ *
+ * @since 3.0.0
+ */
+define('WPRA_PLUGIN_FILE', __FILE__);
+define('WPRA_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('WPRA_PLUGIN_PATH', trailingslashit(plugin_dir_path(__FILE__)));
+define('WPRA_PLUGIN_URL', trailingslashit(plugins_url('/', __FILE__)));
+define('WPRA_PLUGIN_VERSION', '1.0.0');
 
-class RecipeAPIPlugin {
+class Recipe_API_Plugin {
+
+	// instance container
+	private static $instance = null;
 
     public function __construct() {
-        add_action('plugins_loaded', function (){
-            $plugin_dir_path = plugin_dir_path(__FILE__);
-            require_once( WPRECIPEAPI_PLUGIN_DIR . 'Apps/Api.php');
-            new Api();
+	    /**
+	     * Including composer autoloader globally.
+	     *
+	     * @since 3.0.0
+	     */
+	    require_once WPRA_PLUGIN_PATH . 'autoload.php';
 
-            require_once( WPRECIPEAPI_PLUGIN_DIR . 'Apps/Common.php');
-            new Common();
+        add_action('plugins_loaded', function (){
+			new Api();
+			new Common();
         });
     }
 
+	/**
+	 * Singleton instance
+	 *
+	 * @since 3.0.0
+	 */
+	public static function instance()
+	{
+		if (self::$instance == null) {
+			self::$instance = new self;
+		}
+
+		return self::$instance;
+	}
+
 }
 
-$recipe_api_plugin = new RecipeAPIPlugin();
+Recipe_API_Plugin::instance();

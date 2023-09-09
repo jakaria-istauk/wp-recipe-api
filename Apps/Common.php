@@ -1,6 +1,6 @@
 <?php
 
-namespace JakariaIstaukPlugins\Apps;
+namespace Jakaria_Istauk_Plugins\Apps;
 
 class Common
 {
