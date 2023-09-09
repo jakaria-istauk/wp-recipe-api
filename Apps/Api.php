@@ -178,9 +178,18 @@ class Api
     // Callback function to get all recipes
 	public function get_all_recipes( $request ) {
 		$args = array(
-			'post_type' => 'recipe',
-			'per_page'  => - 1, // Retrieve all posts of the 'recipe' type
+			'post_type'      => 'recipe',
+			'posts_per_page' => - 1, // Retrieve all posts of the 'recipe' type
+			'paged'          => 1,
 		);
+
+		if ( $per_page = $request->get_param( 'per_page' ) ) {
+			$args['posts_per_page'] = sanitize_text_field( $per_page );
+		}
+
+		if ( $paged = $request->get_param( 'page' ) ) {
+			$args['paged'] = sanitize_text_field( $paged );
+		}
 
 		$query   = new \WP_Query( $args );
 		$recipes = [];
