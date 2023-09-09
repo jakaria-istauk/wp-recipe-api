@@ -91,11 +91,15 @@ class Helper
 		$upload_dir  = wp_upload_dir();
 		$upload_path = str_replace( '/', DIRECTORY_SEPARATOR, $upload_dir['path'] ) . DIRECTORY_SEPARATOR;
 
-		$img             = str_replace( 'data:image/jpeg;base64,', '', $base64_img );
+		$extension = explode( '/', mime_content_type( $base64_img ) );
+		if ( ! isset( $extension[1] ) ) {
+			return false;
+		}
+		$img             = str_replace( "data:image/{$extension[1]};base64,", '', $base64_img );
 		$img             = str_replace( ' ', '+', $img );
 		$decoded         = base64_decode( $img );
-		$filename        = $title . '.jpeg';
-		$file_type       = 'image/jpeg';
+		$filename        = "{$title}.{$extension[1]}";
+		$file_type       = 'image/'.$extension[1];
 		$hashed_filename = $filename;
 
 		// Save the image in the uploads directory.
