@@ -16,6 +16,27 @@ class Helper
 		return openssl_decrypt( $data, self::$chipher, self::$secretKey, 0, self::$iv );
 	}
 
+	public static function echo_pre( $data ){
+		echo "<pre>";
+		if ( is_array( $data ) ){
+			print_r( $data );
+		}
+		else{
+			var_dump( $data );
+		}
+		echo "</pre>";
+	}
+
+	public static function echo_table_pre( $columns = [] ){
+		echo "<table><tr>";
+		foreach ($columns as $column){
+			echo "<td>";
+			echo_pre($column);
+			echo "</td>";
+		}
+		echo "</tr></table>";
+	}
+
 	public static function prepare_user_login_hash( $user ){
 		$user_login = [
 			'email'      => $user->data->user_email,
