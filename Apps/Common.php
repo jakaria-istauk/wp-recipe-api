@@ -75,10 +75,10 @@ class Common
     }
 
 	public function replace_front_page($templates){
-		$is_react_view = get_option( '_wp_recipe_react_view' );
+		$is_react_view = get_option( '_wp_recipe_react_view', 'yes' );
 
 		if ( !is_admin() && $is_react_view === 'yes' ) {
-			$custom_template = WPRECIPEAPI_PLUGIN_DIR . 'react-app.php';
+			$custom_template = WPRA_PLUGIN_PATH . 'react-app.php';
 			if (file_exists($custom_template)) {
 				return $custom_template;
 			}
