@@ -191,6 +191,16 @@ class Api
 			$args['paged'] = sanitize_text_field( $paged );
 		}
 
+		if ( $author = $request->get_param( 'author' ) ) {
+			$user = get_user_by( 'login', sanitize_text_field( $author ) );
+			if ( $user ){
+				$args['author'] = $user->ID;
+			}
+			else{
+				return rest_ensure_response( [] );
+			}
+		}
+
 		$query   = new \WP_Query( $args );
 		$recipes = [];
 
