@@ -46,15 +46,14 @@ class Helper
 			'post_status'  => 'publish',
 		];
 
-		if ( $author_id ){
+		if ( $author_id ) {
 			$recipe_data['post_author'] = $author_id;
 		}
 
-		if ( !empty( $data['id'] ) ){
+		if ( ! empty( $data['id'] ) ) {
 			$recipe_data['ID'] = $data['id'];
-			$post_id = wp_update_post( $recipe_data );
-		}
-		else{
+			$post_id           = wp_update_post( $recipe_data );
+		} else {
 			$post_id = wp_insert_post( $recipe_data );
 		}
 
@@ -62,7 +61,7 @@ class Helper
 			return false;
 		}
 
-		$recipe = get_post( $post_id );
+		$recipe      = get_post( $post_id );
 		$ingredients = $data['ingredients'] ?? sanitize_text_field( $data['ingredients'] );
 		update_post_meta( $post_id, '_recipe_ingredients', $ingredients );
 		update_post_meta( $post_id, '_recipe_image_src_type', sanitize_text_field( $data['image_src_type'] ) );
@@ -70,12 +69,11 @@ class Helper
 			update_post_meta( $post_id, '_recipe_image_url', sanitize_url( $data['image'] ) );
 		}
 		elseif ( ! empty( $data['image'] && ! empty( $data['image_src_type'] ) && $data['image_src_type'] == 'file' ) ){
-			$attachment_id = self::save_base_64_image( $data['image'], $recipe->post_name, $recipe->post_author );
-			if ( $attachment_id ){
-				set_post_thumbnail( $post_id, $attachment_id );
-			}else{
-				$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $recipe->ID ), 'full' );
-//				wp_delete_attachment()
+			$attachment_id      = self::save_base_64_image( $data['image'], $recipe->post_name, $recipe->post_author );
+			$prev_attachment_id = get_post_thumbnail_id( $recipe->ID );
+			set_post_thumbnail( $post_id, $attachment_id );
+			if ( $attachment_id && $prev_attachment_id ) {
+				wp_delete_attachment( $prev_attachment_id, true );
 			}
 		}
 
