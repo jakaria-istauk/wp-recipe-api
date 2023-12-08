@@ -30,4 +30,3 @@ else{
 <?php } ?>
 </body>
 </html>
-<?php
